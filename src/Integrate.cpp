@@ -7,10 +7,13 @@
 //============================================================================
 
 #include <iostream>
+#include <string>
+
 using namespace std;
 
 int main() {
-	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
-	cout << "Hola soy el seba xD" << endl;
+	string ejemplo = "x^2 + 4*x + 2";
+	cout << ejemplo << endl;
+
 	return 0;
 }
