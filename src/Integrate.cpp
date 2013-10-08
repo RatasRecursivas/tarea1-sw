@@ -45,8 +45,7 @@ int getExpo(string polinomio)
 bool esPolinomio(string polinomio)
 {
 	int pos = polinomio.find("x");
-	int largo_string = polinomio.length();
-	if (pos < largo_string)
+	if (pos < polinomio.length())
 		return true;
 	return false;
 }
