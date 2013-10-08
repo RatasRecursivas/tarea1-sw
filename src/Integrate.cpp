@@ -1,6 +1,7 @@
 #include <string>
 #include <iostream>
 #include <stdlib.h>
+#include <sstream>
 
 using namespace std;
 
@@ -29,6 +30,7 @@ int getExpo(string polinomio)
 {
 	string expo = "";
 	int pos = polinomio.find("^");
+	//se busca el ^, de ahí en adelante será el número del exponente
 	if(pos < polinomio.length())
 	{
 		expo = polinomio.substr(pos+1,polinomio.length());
@@ -43,41 +45,43 @@ int getExpo(string polinomio)
 bool esPolinomio(string polinomio)
 {
 	int pos = polinomio.find("x");
-	if (pos < polinomio.length())
+	int largo_string = polinomio.length();
+	if (pos < largo_string)
 		return true;
 	return false;
 }
 
+string integrate(string polinomio)
+{
+	stringstream result;
+	if(esPolinomio(polinomio))
+	{
+		int cons = getConst(polinomio);
+		int expo = getExpo(polinomio);
+		expo += 1;
+		//menos con menos más
+		if (expo < 0 && cons < 0)
+		{
+			expo *= -1 ; cons *= -1;
+		}
+		result << cons <<"/" << expo <<"*x^" << expo ;
+	}
+	else
+	{
+		int valor = atoi(polinomio.c_str());
+		result << valor << "*x";
+	}
+	return result.str();
+}
+
 int main()
 {
-	string polinomios[5] = {"-x^2","-123*x^-23","-1*x","x^13","-23*x"};
+	string funciones[] = {" -x^2 "," +123*x^23 "," -1*x "," +x^13 "," -23*x"," +123 "," -12 "};
 	int i;
-	for (i = 0; i < 5 ; ++i)
+	for (i = 0; i < 7 ; ++i)
 	{
-		cout <<"Polinomio: " <<polinomios[i] << endl;
-		cout << "Constante : " << getConst(polinomios[i]) << "\nExponente : " << getExpo(polinomios[i]) << endl;
+		cout <<"funcion:" <<funciones[i] << endl;
+		cout << "Integral : " << integrate(funciones[i]) << endl;
 		cout <<"==================================="<< endl;
 	}
 }
-/* ==============================Salida ================
-Polinomio: -x^2
-Constante : -1
-Exponente : 2
-===================================
-Polinomio: -123*x^-23
-Constante : -123
-Exponente : -23
-===================================
-Polinomio: -1*x
-Constante : -1
-Exponente : 1
-===================================
-Polinomio: x^13
-Constante : 1
-Exponente : 13
-===================================
-Polinomio: -23*x
-Constante : -23
-Exponente : 1
-===================================
-*/
