@@ -5,11 +5,11 @@
 
 using namespace std;
 
-// a la mierda regex haré yo mismo la expresión xD
+// a la mierda regex harï¿½ yo mismo la expresiï¿½n xD
 int getConst(string polinomio)
 {
 	string cons = "";
-	int pos = polinomio.find("*");
+	unsigned int pos = polinomio.find("*");
 	if ( pos < polinomio.length() )
 	{
 		//se obtiene el substring desde el inicio hasta donde llega el por
@@ -30,7 +30,7 @@ int getExpo(string polinomio)
 {
 	string expo = "";
 	int pos = polinomio.find("^");
-	//se busca el ^, de ahí en adelante será el número del exponente
+	//se busca el ^, de ahï¿½ en adelante serï¿½ el nï¿½mero del exponente
 	if(pos < polinomio.length())
 	{
 		expo = polinomio.substr(pos+1,polinomio.length());
@@ -58,7 +58,7 @@ string integrate(string polinomio)
 		int cons = getConst(polinomio);
 		int expo = getExpo(polinomio);
 		expo += 1;
-		//menos con menos más
+		//menos con menos mï¿½s
 		if (expo < 0 && cons < 0)
 		{
 			expo *= -1 ; cons *= -1;

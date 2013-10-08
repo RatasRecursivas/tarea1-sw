@@ -34,3 +34,4 @@
 *.lai
 *.la
 *.a
+/Debug
