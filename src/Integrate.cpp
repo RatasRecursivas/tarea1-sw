@@ -1,15 +1,24 @@
-#include <string>
+//============================================================================
+// Name        : Integral.cpp
+// Author      : Seba
+// Version     :
+// Copyright   :
+// Description : Hello World in C++, Ansi-style
+//============================================================================
+
 #include <iostream>
-#include <stdlib.h>
+#include <cstdlib>
+#include <string>
 #include <sstream>
 
 using namespace std;
 
-// a la mierda regex harï¿½ yo mismo la expresiï¿½n xD
-int getConst(string polinomio)
+
+// a la mierda regex haré yo mismo la expresión xD
+int getCons(string polinomio)
 {
 	string cons = "";
-	unsigned int pos = polinomio.find("*");
+	int pos = polinomio.find("*");
 	if ( pos < polinomio.length() )
 	{
 		//se obtiene el substring desde el inicio hasta donde llega el por
@@ -30,7 +39,7 @@ int getExpo(string polinomio)
 {
 	string expo = "";
 	int pos = polinomio.find("^");
-	//se busca el ^, de ahï¿½ en adelante serï¿½ el nï¿½mero del exponente
+	//se busca el ^, de ahí en adelante será el número del exponente
 	if(pos < polinomio.length())
 	{
 		expo = polinomio.substr(pos+1,polinomio.length());
@@ -41,46 +50,87 @@ int getExpo(string polinomio)
 		return 1;
 }
 
-// Discrimina si es un polinomio o una constante
-bool esPolinomio(string polinomio)
-{
-	int pos = polinomio.find("x");
-	if (pos < polinomio.length())
-		return true;
-	return false;
-}
 
-string integrate(string polinomio)
+
+string integrate(string funcion)
 {
 	stringstream result;
-	if(esPolinomio(polinomio))
+	int pos = funcion.find('x');
+	if(pos < funcion.length())
 	{
-		int cons = getConst(polinomio);
-		int expo = getExpo(polinomio);
+		int cons = getCons(funcion);
+		int expo = getExpo(funcion);
 		expo += 1;
-		//menos con menos mï¿½s
 		if (expo < 0 && cons < 0)
 		{
-			expo *= -1 ; cons *= -1;
+		expo *= -1 ; cons *= -1;
 		}
 		result << cons <<"/" << expo <<"*x^" << expo ;
 	}
 	else
-	{
-		int valor = atoi(polinomio.c_str());
-		result << valor << "*x";
-	}
+		result << atoi(funcion.c_str()) << "x";
 	return result.str();
+}
+
+string integral(string funcion)
+{
+	stringstream salida;
+	string sub;
+	int posmenos,posmas;
+	while(true)
+	{
+		stringstream substring;
+		posmenos = funcion.find('-',1);
+		posmas = funcion.find('+',1);
+		if((posmenos == -1 && posmas == 0) || (posmenos == -1 && posmas == 0) || (posmenos == -1 && posmas == -1))
+			break;
+		if(posmas == -1 )
+			posmas = posmenos;
+		else
+			if(posmenos != -1 )
+				if(posmenos < posmas )
+					posmas = posmenos;
+		sub = funcion.substr(0,posmas);
+		sub = integrate(sub);
+		if(sub[0] != '-')
+			substring << "+ " << sub << " ";
+		else
+			substring << sub << " ";
+		salida << substring.str();
+		funcion = funcion.substr(posmas+1,funcion.length());
+	}
+	stringstream substring;
+	sub = integrate(funcion);
+	if(sub[0] != '-')
+		substring << " + " << sub << " ";
+	else
+		substring << " "<< sub << " ";
+	salida << substring.str() << " + C";
+	return salida.str();
+}
+
+//odio los espacios ahora
+string eliminarSpace(string polinomio)
+{
+	stringstream sinspacio;
+	string sub;
+	int indspac;
+	do {
+		indspac = polinomio.find(' ');
+		if(indspac == -1)
+			break;
+		sub = polinomio.substr(0,indspac);
+		polinomio = polinomio.substr(indspac+1,polinomio.length());
+		sinspacio << sub;
+	} while (true);
+	sinspacio<< polinomio;
+	return sinspacio.str();
 }
 
 int main()
 {
-	string funciones[] = {" -x^2 "," +123*x^23 "," -1*x "," +x^13 "," -23*x"," +123 "," -12 "};
-	int i;
-	for (i = 0; i < 7 ; ++i)
-	{
-		cout <<"funcion:" <<funciones[i] << endl;
-		cout << "Integral : " << integrate(funciones[i]) << endl;
-		cout <<"==================================="<< endl;
-	}
+	string p = " x^23 + 12 + 2x+ 54x ";
+	string p_ = eliminarSpace(p);
+	cout << "Funcion: " << p <<"\nIntegral: " << integral(p_) << endl;
+	return 0;
 }
