@@ -63,7 +63,7 @@ string integrate(string funcion)
 		expo += 1;
 		if (expo < 0 && cons < 0)
 		{
-		expo *= -1 ; cons *= -1;
+			expo *= -1 ; cons *= -1;
 		}
 		result << cons <<"/" << expo <<"*x^" << expo ;
 	}
@@ -72,41 +72,49 @@ string integrate(string funcion)
 	return result.str();
 }
 
-string integral(string funcion)
+/*
+ * daba un funcion por ejemplo string = "x^2+32*x-3"
+ * va cortando por substring por monomio o constante
+ * o sea quedaría
+ * sub = x^2 string = 32*x-3
+ * a sub aplica integral y lo guarda en un stringsteam para ir agregando más valores
+ * se aplica lo anterior hasta que string quede vacio
+ */
+string getIntegral(string funcion)
 {
-	stringstream salida;
+	stringstream result;
 	string sub;
-	int posmenos,posmas;
-	while(true)
+	int posmenos,posmas; //acá se guardan las posiciones de los signo para ir separando por cada monomio o constante
+	bool primervalor = true;
+	do
 	{
-		stringstream substring;
 		posmenos = funcion.find('-',1);
 		posmas = funcion.find('+',1);
-		if((posmenos == -1 && posmas == 0) || (posmenos == -1 && posmas == 0) || (posmenos == -1 && posmas == -1))
-			break;
-		if(posmas == -1 )
+		// puede que el primer menos sea de un exponenete, si es así buscamos el siguiente
+		if( (funcion.find("^-",1) -1 ) == posmenos)
+			posmenos = funcion.find('-',posmenos+2);
+		//preguntamos, podemos quedarnos sin + o -. Si fuera el caso cortamos el string entrada por completo
+		if(posmenos == -1 && posmas == -1)
+			posmenos = funcion.length();
+		// nos quedamos con el menor no negativo
+		if ( (posmas == -1) || (posmenos != -1 && posmenos < posmas) )
 			posmas = posmenos;
-		else
-			if(posmenos != -1 )
-				if(posmenos < posmas )
-					posmas = posmenos;
 		sub = funcion.substr(0,posmas);
 		sub = integrate(sub);
-		if(sub[0] != '-')
-			substring << "+ " << sub << " ";
+		if(primervalor != true)
+			if(sub[0] != '-' || primervalor)
+				result <<" + " <<sub;
+			else
+				result << " " << sub;
 		else
-			substring << sub << " ";
-		salida << substring.str();
-		funcion = funcion.substr(posmas+1,funcion.length());
-	}
-	stringstream substring;
-	sub = integrate(funcion);
-	if(sub[0] != '-')
-		substring << " + " << sub << " ";
-	else
-		substring << " "<< sub << " ";
-	salida << substring.str() << " + C";
-	return salida.str();
+			{
+				result << " " << sub;
+				primervalor = false;
+			}
+		funcion = funcion.substr(posmas, funcion.length());
+	} while (funcion.length() != 0);
+	result<<" + C";
+	return  result.str();
 }
 
 //odio los espacios ahora
@@ -129,8 +137,8 @@ string eliminarSpace(string polinomio)
 
 int main()
 {
-	string p = " x^23 + 12 + 2x+ 54x ";
+	string p = "54*x^2 - 478*x + 9";
 	string p_ = eliminarSpace(p);
-	cout << "Funcion: " << p <<"\nIntegral: " << integral(p_) << endl;
+	cout << "Funcion: " << p <<"\nIntegral: " << getIntegral(p_) << endl;
 	return 0;
 }
