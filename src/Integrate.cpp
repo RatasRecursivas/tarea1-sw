@@ -44,7 +44,7 @@ vector<string> splitFuncion(string funcion)
 	{
 		posmenos = funcion.find('-',1);
 		posmas = funcion.find('+',1);
-		// puede que el primer menos sea de un exponenete, si es así buscamos el siguiente
+		// puede que el primer menos sea de un exponenete, si es asï¿½ buscamos el siguiente
 		if( (funcion.find("^-",1) -1 ) == posmenos)
 			posmenos = funcion.find('-',posmenos+2);
 		//si nos quedamos sin - o + terminas de iterar cortando al maximo el string
@@ -61,7 +61,7 @@ vector<string> splitFuncion(string funcion)
 	return p;
 }
 
-// a la mierda regex haré yo mismo la expresión xD
+// a la mierda regex harï¿½ yo mismo la expresiï¿½n xD
 int getCons(string polinomio)
 {
 	string cons = "";
@@ -86,7 +86,7 @@ int getExpo(string polinomio)
 {
 	string expo = "";
 	int pos = polinomio.find("^");
-	//se busca el ^, de ahí en adelante será el número del exponente
+	//se busca el ^, de ahï¿½ en adelante serï¿½ el nï¿½mero del exponente
 	if(pos < polinomio.length())
 	{
 		expo = polinomio.substr(pos+1,polinomio.length());
@@ -120,9 +120,9 @@ string integrate(string funcion)
 /*
  * daba un funcion por ejemplo string = "x^2+32*x-3"
  * va cortando por substring por monomio o constante
- * o sea quedaría
+ * o sea quedarï¿½a
  * sub = x^2 string = 32*x-3
- * a sub aplica integral y lo guarda en un stringsteam para ir agregando más valores
+ * a sub aplica integral y lo guarda en un stringsteam para ir agregando mï¿½s valores
  * se aplica lo anterior hasta que string quede vacio
  */
 string getIntegral(string funcion)
@@ -187,7 +187,7 @@ void graficarFuncion(string funcionEntrada,int inicio, int fin)
 	vector<float> x_valores = x_puntos(inicio,fin);
 	vector<float> y_valores = y_puntos(funcionEntrada,x_valores);
 	/*
-	 * Aplicar Gráfico
+	 * Aplicar Grï¿½fico
 	 * */
 
 }
@@ -213,21 +213,15 @@ int main(int argc, char *argv[])
 		}
 		else if(strcmp(argv[1],"-v")==0)
 		{
-			cout << "Natalia Tarifeño" << endl;
+			cout << "Natalia TarifeÃ±o" << endl;
 			cout << "Sebastian Rocha" << endl;
-			cout << "Patricio Pérez" << endl;
-			cout << "Compilado algun dia" << endl;
+			cout << "Patricio PÃ©rez" << endl;
+			cout << "Fecha de compilacion: " << __DATE__ << " " << __TIME__ << endl;
 		}
 		else
 			cout << "Opcion invalida" << endl;
 	}
 	else
 		cout << "Tiene que pasarle algun parametro!" << endl;
-
-		
-	//cout << getIntegral("-x^2 - 23 + 32*x + 23 - 53 * x + 50 *x^2") << endl;
-	//string p = "-x^2 - 23 + 32*x + 23 - 53 * x + 50 *x^2";
-	//cout << "Funcion: " << p << "\nIntegral: " << getIntegral(p) << endl;
-	
-
+	return 0;
 }
