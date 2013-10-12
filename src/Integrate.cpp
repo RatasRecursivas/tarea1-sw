@@ -127,8 +127,6 @@ string integrate(string funcion)
 string getIntegral(string funcion)
 {
 	stringstream result;
-	int posmenos,posmas; //acá se guardan las posiciones de los signo para ir separando por cada monomio o constante
-	bool primervalor = true;
 	vector<string> p = splitFuncion(funcion);
 	vector<string>::size_type i;
 	if(0  == p.size())
@@ -136,7 +134,7 @@ string getIntegral(string funcion)
 	result << integrate(p[0]) <<" ";
 	for (i = 1; i != p.size(); ++i)
 	{
-		if(integrate(p[i])[0] == '+')
+		if(integrate(p[i])[0] != '-')
 			result << "+ ";
 		result << integrate(p[i]) <<" ";
 	}
@@ -169,13 +167,33 @@ vector<float> y_puntos(string funcion, vector<float> x_puntos)
 {
 	vector<float> y_puntos;
 	vector<float>::size_type i;
+	vector<string> separafuncion = splitFuncion(funcion);
+	float sum = 0;
+	vector<string>::size_type it;
 	for (i = 0; i != x_puntos.size(); ++i)
-		y_puntos.push_back(evaluarPunto(funcion,x_puntos[i]));
+	{
+		for (it = 0; it != separafuncion.size(); ++it)
+			sum += evaluarPunto(separafuncion[it],x_puntos[i]);
+		y_puntos.push_back(sum);
+		sum = 0;
+	}
 	return y_puntos;
+}
+
+void graficarFuncion(string funcionEntrada,int inicio, int fin)
+{
+	string integral = getIntegral(funcionEntrada);
+	vector<float> x_valores = x_puntos(inicio,fin);
+	vector<float> y_valores = y_puntos(funcionEntrada,x_valores);
+	/*
+	 * Aplicar Gráfico
+	 * */
+
 }
 
 int main()
 {
-	string p = "-x^2-23+32*x";
+	string p = "-x^2 - 23 + 32*x + 23 - 53 * x + 50 *x^2";
+	cout << "Funcion: " << p << "\nIntegral: " << getIntegral(p) << endl;
 
 }
