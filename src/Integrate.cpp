@@ -12,6 +12,7 @@
 #include <sstream>
 #include <vector>
 #include <math.h>
+#include <cstring>
 
 using namespace std;
 
@@ -191,9 +192,42 @@ void graficarFuncion(string funcionEntrada,int inicio, int fin)
 
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-	string p = "-x^2 - 23 + 32*x + 23 - 53 * x + 50 *x^2";
-	cout << "Funcion: " << p << "\nIntegral: " << getIntegral(p) << endl;
+	if(argc > 1)
+	{
+		if (strcmp(argv[1],"-i")==0)
+		{
+			if(argc == 3)
+				cout << "La integral es " << getIntegral((string)argv[2])<< endl;
+			else
+				cout << "Falta el polinomio!" << endl;
+		}
+		else if(strcmp(argv[1],"-g")==0)
+		{
+			if(argc == 5)
+				// ejecutar grafico
+				cout << "se grafico, vealo" << endl;
+			else
+				cout << "Le faltaron parametros, el polinomio, desde o hasta" << endl;
+		}
+		else if(strcmp(argv[1],"-v")==0)
+		{
+			cout << "Natalia Tarifeño" << endl;
+			cout << "Sebastian Rocha" << endl;
+			cout << "Patricio Pérez" << endl;
+			cout << "Compilado algun dia" << endl;
+		}
+		else
+			cout << "Opcion invalida" << endl;
+	}
+	else
+		cout << "Tiene que pasarle algun parametro!" << endl;
+
+		
+	//cout << getIntegral("-x^2 - 23 + 32*x + 23 - 53 * x + 50 *x^2") << endl;
+	//string p = "-x^2 - 23 + 32*x + 23 - 53 * x + 50 *x^2";
+	//cout << "Funcion: " << p << "\nIntegral: " << getIntegral(p) << endl;
+	
 
 }
