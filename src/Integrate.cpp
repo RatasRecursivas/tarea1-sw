@@ -10,9 +10,55 @@
 #include <cstdlib>
 #include <string>
 #include <sstream>
+#include <vector>
+#include <math.h>
 
 using namespace std;
 
+//odio los espacios ahora
+string eliminarSpace(string polinomio)
+{
+	stringstream sinspacio;
+	string sub;
+	int indspac;
+	do {
+		indspac = polinomio.find(' ');
+		if(indspac == -1)
+			break;
+		sub = polinomio.substr(0,indspac);
+		polinomio = polinomio.substr(indspac+1,polinomio.length());
+		sinspacio << sub;
+	} while (true);
+	sinspacio<< polinomio;
+	return sinspacio.str();
+}
+
+vector<string> splitFuncion(string funcion)
+{
+	vector<string> p;
+	string sub;
+	funcion = eliminarSpace(funcion);
+	int posmenos,posmas;
+	do
+	{
+		posmenos = funcion.find('-',1);
+		posmas = funcion.find('+',1);
+		// puede que el primer menos sea de un exponenete, si es así buscamos el siguiente
+		if( (funcion.find("^-",1) -1 ) == posmenos)
+			posmenos = funcion.find('-',posmenos+2);
+		//si nos quedamos sin - o + terminas de iterar cortando al maximo el string
+		if(posmenos == -1 && posmas == -1)
+			posmas = funcion.length();
+		// nos quedamos con el menor no negativo
+		if ( (posmas == -1) || (posmenos != -1 && posmenos < posmas) )
+			posmas = posmenos;
+		sub = funcion.substr(0,posmas);
+		p.push_back(sub);
+		funcion = funcion.substr(posmas,funcion.length());
+
+	} while (funcion.length() != 0);
+	return p;
+}
 
 // a la mierda regex haré yo mismo la expresión xD
 int getCons(string polinomio)
@@ -50,8 +96,6 @@ int getExpo(string polinomio)
 		return 1;
 }
 
-
-
 string integrate(string funcion)
 {
 	stringstream result;
@@ -68,7 +112,7 @@ string integrate(string funcion)
 		result << cons <<"/" << expo <<"*x^" << expo ;
 	}
 	else
-		result << atoi(funcion.c_str()) << "x";
+		result << atoi(funcion.c_str()) << "*x";
 	return result.str();
 }
 
@@ -83,62 +127,55 @@ string integrate(string funcion)
 string getIntegral(string funcion)
 {
 	stringstream result;
-	string sub;
 	int posmenos,posmas; //acá se guardan las posiciones de los signo para ir separando por cada monomio o constante
 	bool primervalor = true;
-	do
+	vector<string> p = splitFuncion(funcion);
+	vector<string>::size_type i;
+	if(0  == p.size())
+		return "";
+	result << integrate(p[0]) <<" ";
+	for (i = 1; i != p.size(); ++i)
 	{
-		posmenos = funcion.find('-',1);
-		posmas = funcion.find('+',1);
-		// puede que el primer menos sea de un exponenete, si es así buscamos el siguiente
-		if( (funcion.find("^-",1) -1 ) == posmenos)
-			posmenos = funcion.find('-',posmenos+2);
-		//preguntamos, podemos quedarnos sin + o -. Si fuera el caso cortamos el string entrada por completo
-		if(posmenos == -1 && posmas == -1)
-			posmenos = funcion.length();
-		// nos quedamos con el menor no negativo
-		if ( (posmas == -1) || (posmenos != -1 && posmenos < posmas) )
-			posmas = posmenos;
-		sub = funcion.substr(0,posmas);
-		sub = integrate(sub);
-		if(primervalor != true)
-			if(sub[0] != '-' || primervalor)
-				result <<" + " <<sub;
-			else
-				result << " " << sub;
-		else
-			{
-				result << " " << sub;
-				primervalor = false;
-			}
-		funcion = funcion.substr(posmas, funcion.length());
-	} while (funcion.length() != 0);
-	result<<" + C";
+		if(integrate(p[i])[0] == '+')
+			result << "+ ";
+		result << integrate(p[i]) <<" ";
+	}
+	result<<"+ C";
 	return  result.str();
 }
 
-//odio los espacios ahora
-string eliminarSpace(string polinomio)
+float evaluarPunto(string miniFuncion, int x)
 {
-	stringstream sinspacio;
-	string sub;
-	int indspac;
-	do {
-		indspac = polinomio.find(' ');
-		if(indspac == -1)
-			break;
-		sub = polinomio.substr(0,indspac);
-		polinomio = polinomio.substr(indspac+1,polinomio.length());
-		sinspacio << sub;
-	} while (true);
-	sinspacio<< polinomio;
-	return sinspacio.str();
+	int pos = miniFuncion.find('x');
+	if (pos < miniFuncion.length())
+	{
+		int cont = getCons(miniFuncion);
+		int expo = getExpo(miniFuncion);
+		return cont*pow(x,expo);
+	}
+	else
+		return atoi(miniFuncion.c_str());
+}
+
+vector<float> x_puntos(int inicio, int fin)
+{
+	vector<float> res;
+	for(float f = (float)inicio; f < (float)fin; f += 0.5)
+		res.push_back(f);
+	return res;
+}
+
+vector<float> y_puntos(string funcion, vector<float> x_puntos)
+{
+	vector<float> y_puntos;
+	vector<float>::size_type i;
+	for (i = 0; i != x_puntos.size(); ++i)
+		y_puntos.push_back(evaluarPunto(funcion,x_puntos[i]));
+	return y_puntos;
 }
 
 int main()
 {
-	string p = "54*x^2 - 478*x + 9";
-	string p_ = eliminarSpace(p);
-	cout << "Funcion: " << p <<"\nIntegral: " << getIntegral(p_) << endl;
-	return 0;
+	string p = "-x^2-23+32*x";
+
 }
