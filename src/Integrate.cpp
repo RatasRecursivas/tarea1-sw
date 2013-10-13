@@ -63,16 +63,26 @@ vector<string> splitFuncion(string funcion)
 }
 
 // a la mierda regex har� yo mismo la expresi�n xD
-int getCons(string polinomio)
+float getCons(string polinomio)
 {
-	string cons = "";
+	string cons;
 	int pos = polinomio.find("*");
-	if ( pos < polinomio.length() )
+	if (pos < polinomio.length())
 	{
 		//se obtiene el substring desde el inicio hasta donde llega el por
 		// 123412*x...
 		cons = polinomio.substr(0,pos);
-		return atoi(cons.c_str());
+        
+        // Ahora compruebo si hay un /, indicando una division
+        pos = cons.find("/");
+        if(pos < cons.length()) // Encontre una division, realizarla!
+        {
+            float numerador = atoi(cons.substr(0, pos).c_str());
+            int denominador = atoi(cons.substr(pos + 1, cons.length()).c_str());
+            return numerador / denominador;
+        }
+        else
+            return atoi(cons.c_str());
 	}
 	else
 	{
@@ -104,7 +114,7 @@ string integrate(string funcion)
 	int pos = funcion.find('x');
 	if(pos < funcion.length())
 	{
-		int cons = getCons(funcion);
+		float cons = getCons(funcion);
 		int expo = getExpo(funcion);
 		expo += 1;
 		if (expo < 0 && cons < 0)
@@ -149,9 +159,9 @@ float evaluarPunto(string miniFuncion, int x)
 	int pos = miniFuncion.find('x');
 	if (pos < miniFuncion.length())
 	{
-		int cont = getCons(miniFuncion);
+		float cont = getCons(miniFuncion);
 		int expo = getExpo(miniFuncion);
-		return cont*pow(x,expo);
+		return cont * pow(x,expo);
 	}
 	else
 		return atoi(miniFuncion.c_str());
@@ -160,7 +170,7 @@ float evaluarPunto(string miniFuncion, int x)
 vector<float> x_puntos(int inicio, int fin)
 {
 	vector<float> res;
-	for(float f = (float)inicio; f < (float)fin; f += 0.5)
+	for(float f = (float)inicio; f <= (float)fin; f += 1.0)
 		res.push_back(f);
 	return res;
 }
@@ -184,11 +194,13 @@ vector<float> y_puntos(string funcion, vector<float> x_puntos)
 
 void graficarFuncion(string funcionEntrada,int inicio, int fin)
 {
-	string integral = getIntegral(funcionEntrada);
-	vector<float> x_valores = x_puntos(inicio,fin);
-	vector<float> y_valores = y_puntos(funcionEntrada,x_valores);
+    stringstream nombre;
+    string integral = getIntegral(funcionEntrada);
+    nombre << "f(x) = " << integral;
+	vector<float> x_valores = x_puntos(inicio, fin);
+	vector<float> y_valores = y_puntos(integral, x_valores);
 
-	PLFLT xmin = inicio, xmax = fin, x[2 * (fin - inicio)], y[2 * (fin - inicio)];
+	PLFLT xmin = inicio, xmax = fin, x[fin - inicio], y[fin - inicio];
 	int i = 0;
 	for (vector<float>::iterator it = x_valores.begin(); it != x_valores.end(); ++it)
 	{
@@ -197,10 +209,8 @@ void graficarFuncion(string funcionEntrada,int inicio, int fin)
 	}
 	i = 0;
 	PLFLT ymin = y_valores[0], ymax = y_valores[0];
-	cout << "Valores y ";
 	for (vector<float>::iterator it = y_valores.begin(); it != y_valores.end(); ++it)
 	{
-		cout << *it << " ";
 		if(*it > ymax)
 			ymax = *it;
 		if(*it < ymin)
@@ -208,7 +218,7 @@ void graficarFuncion(string funcionEntrada,int inicio, int fin)
 		y[i] = *it;
 		i++;
 	}
-	PLINT just=0, axis=0;
+	PLINT just = 0, axis = 1;
 	plstream *pls; //Objeto de plot
 
 	// Inicializar el plstream
@@ -223,9 +233,9 @@ void graficarFuncion(string funcionEntrada,int inicio, int fin)
 	// Demosle
 	pls->init();
 	pls->env(xmin, xmax, ymin, ymax, just, axis );
-	pls->lab("(x)", "(y)", integral.c_str());
-	pls->line(2 * (fin - inicio), x, y);
-	pls->poin(2 * (fin - inicio), x, y, 8);
+	pls->lab("(x)", "(y)", nombre.str().c_str());
+	pls->line(fin - inicio, x, y);
+    pls->fill(fin -inicio, x, y);
 
 	// Lo terminamos de usar
 	delete pls;
@@ -246,9 +256,9 @@ int main(int argc, char *argv[])
 		{
 			if(argc == 5)
 			{
-				// ejecutar grafico
+				cout << "La integral es " << getIntegral((string)argv[2])<< endl;
 				graficarFuncion((string)argv[2], atoi(argv[3]), atoi(argv[4]));
-				cout << "se grafico, vealo" << endl;
+				cout << "Se grafico, vealo!" << endl;
 			}
 			else
 				cout << "Le faltaron parametros, el polinomio, desde o hasta" << endl;
