@@ -46,18 +46,23 @@ vector<string> splitFuncion(string funcion)
 		posmenos = funcion.find('-',1);
 		posmas = funcion.find('+',1);
 		// puede que el primer menos sea de un exponenete, si es as� buscamos el siguiente
-		if( (funcion.find("^-",1) -1 ) == posmenos)
+//		cout << "Posmenos -: " << posmenos << endl;
+//		cout << "Posmenos ^-: " << funcion.find("^-",1) + 1 << endl;
+		if( (funcion.find("^-",1) + 1 ) == posmenos)
 			posmenos = funcion.find('-',posmenos+2);
+
 		//si nos quedamos sin - o + terminas de iterar cortando al maximo el string
 		if(posmenos == -1 && posmas == -1)
 			posmas = funcion.length();
+//		cout << "Posmenos: " << posmenos << endl;
+//		cout << "posmas: " << posmas << endl;
 		// nos quedamos con el menor no negativo
 		if ( (posmas == -1) || (posmenos != -1 && posmenos < posmas) )
 			posmas = posmenos;
+		cout << "Corte : " << posmas << endl;
 		sub = funcion.substr(0,posmas);
 		p.push_back(sub);
 		funcion = funcion.substr(posmas,funcion.length());
-
 	} while (funcion.length() != 0);
 	return p;
 }
