@@ -1,9 +1,9 @@
 //============================================================================
 // Name        : Integral.cpp
-// Author      : Seba
+// Author      : Seba || Pato || Naty
 // Version     :
 // Copyright   :
-// Description : Hello World in C++, Ansi-style
+// Description : Programa integral (integro)
 //============================================================================
 
 #include <iostream>
@@ -11,8 +11,9 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include <math.h>
+#include <cmath>
 #include <cstring>
+#include <plstream.h>
 
 using namespace std;
 
@@ -186,10 +187,48 @@ void graficarFuncion(string funcionEntrada,int inicio, int fin)
 	string integral = getIntegral(funcionEntrada);
 	vector<float> x_valores = x_puntos(inicio,fin);
 	vector<float> y_valores = y_puntos(funcionEntrada,x_valores);
-	/*
-	 * Aplicar Gr�fico
-	 * */
 
+	PLFLT xmin = inicio, xmax = fin, x[2 * (fin - inicio)], y[2 * (fin - inicio)];
+	int i = 0;
+	for (vector<float>::iterator it = x_valores.begin(); it != x_valores.end(); ++it)
+	{
+		x[i] = *it;
+		i++;
+	}
+	i = 0;
+	PLFLT ymin = y_valores[0], ymax = y_valores[0];
+	cout << "Valores y ";
+	for (vector<float>::iterator it = y_valores.begin(); it != y_valores.end(); ++it)
+	{
+		cout << *it << " ";
+		if(*it > ymax)
+			ymax = *it;
+		if(*it < ymin)
+			ymin = *it;
+		y[i] = *it;
+		i++;
+	}
+	PLINT just=0, axis=0;
+	plstream *pls; //Objeto de plot
+
+	// Inicializar el plstream
+	pls = new plstream();
+
+	// Decirle que guarde en png
+	plsdev("png");
+
+	// Fichero donde se guarda
+	plsfnam("test2.png");
+
+	// Demosle
+	pls->init();
+	pls->env(xmin, xmax, ymin, ymax, just, axis );
+	pls->lab("(x)", "(y)", integral.c_str());
+	pls->line(2 * (fin - inicio), x, y);
+	pls->poin(2 * (fin - inicio), x, y, 8);
+
+	// Lo terminamos de usar
+	delete pls;
 }
 
 int main(int argc, char *argv[])
@@ -206,8 +245,11 @@ int main(int argc, char *argv[])
 		else if(strcmp(argv[1],"-g")==0)
 		{
 			if(argc == 5)
+			{
 				// ejecutar grafico
+				graficarFuncion((string)argv[2], atoi(argv[3]), atoi(argv[4]));
 				cout << "se grafico, vealo" << endl;
+			}
 			else
 				cout << "Le faltaron parametros, el polinomio, desde o hasta" << endl;
 		}
