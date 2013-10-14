@@ -59,7 +59,7 @@ vector<string> splitFuncion(string funcion)
 		// nos quedamos con el menor no negativo
 		if ( (posmas == -1) || (posmenos != -1 && posmenos < posmas) )
 			posmas = posmenos;
-		cout << "Corte : " << posmas << endl;
+//		cout << "Corte : " << posmas << endl;
 		sub = funcion.substr(0,posmas);
 		p.push_back(sub);
 		funcion = funcion.substr(posmas,funcion.length());
@@ -170,6 +170,18 @@ float evaluarPunto(string miniFuncion, int x)
 	}
 	else
 		return atoi(miniFuncion.c_str());
+}
+
+float evaluarUnpunto(string polinomio, float x)
+{
+	float resultado = 0;
+	vector<string> polinomioseparado = splitFuncion(polinomio);
+	vector<string>::size_type it;
+	for (it = 0; it != polinomioseparado.size(); ++it)
+	{
+		resultado += evaluarPunto(polinomioseparado[it],x);
+	}
+	return resultado;
 }
 
 vector<float> x_puntos(int inicio, int fin)
