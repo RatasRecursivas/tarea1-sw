@@ -209,53 +209,50 @@ vector<float> y_puntos(string funcion, vector<float> x_puntos)
 	return y_puntos;
 }
 
-void graficarFuncion(string funcionEntrada,int inicio, int fin)
+void graficar(string funcion, int inicio, int fin)
 {
+    int cant_puntos = 2 * (fin - inicio); // Recordar ver una distribucion de puntos del 105%
+    string integral = getIntegral(funcion);
     stringstream nombre;
-    string integral = getIntegral(funcionEntrada);
     nombre << "f(x) = " << integral;
-	vector<float> x_valores = x_puntos(inicio, fin);
-	vector<float> y_valores = y_puntos(integral, x_valores);
+    int it = 0; // Itera por los arreglos x e y
+    
+    // Arreglos de puntos (x,y)
+    PLFLT x[cant_puntos], y[cant_puntos];
+    
+    vector<float> x_valores = x_puntos(inicio, fin); // Obtener coordenadas x
+    vector<float> y_valores = y_puntos(integral, x_valores);
+    
+    PLFLT ymin = y_valores[0], ymax = y_valores[0]; // Valores maximos y minimos de y, se modificaran
+    PLFLT xmin = inicio, xmax = fin; // Max y min de eje x
+    
+    // Pasar datos de los vectores a los arreglos correspondientes, calcular maximo y minimo valor de eje y
+    for(vector<float>::iterator x_it = x_valores.begin(), y_it = y_valores.begin(); x_it != x_valores.end(); x_it++, y_it++, it++)
+    {
+        if(*y_it > ymax)
+            ymax = *y_it;
+        if(*y_it < ymin)
+            ymin = *y_it;
+        x[it] = *x_it; y[it] = *y_it;
+    }
+    
+    PLINT just = 0, axis = 1;
 
-	PLFLT xmin = inicio, xmax = fin, x[fin - inicio], y[fin - inicio];
-	int i = 0;
-	for (vector<float>::iterator it = x_valores.begin(); it != x_valores.end(); ++it)
-	{
-		x[i] = *it;
-		i++;
-	}
-	i = 0;
-	PLFLT ymin = y_valores[0], ymax = y_valores[0];
-	for (vector<float>::iterator it = y_valores.begin(); it != y_valores.end(); ++it)
-	{
-		if(*it > ymax)
-			ymax = *it;
-		if(*it < ymin)
-			ymin = *it;
-		y[i] = *it;
-		i++;
-	}
-	PLINT just = 0, axis = 1;
-	plstream *pls; //Objeto de plot
+    // Generar el eje x para cerrar los poligonos generados por el polinomio
+    x[it] = (fin - inicio);
+    y[it] = 0;
+    
+    plstream *pls; //Objeto de plot
+    pls = new plstream();
+    plsdev("png"); // Guardamos en png
+    plsfnam("test2.png"); // Aca se guarda
 
-	// Inicializar el plstream
-	pls = new plstream();
-
-	// Decirle que guarde en png
-	plsdev("png");
-
-	// Fichero donde se guarda
-	plsfnam("test2.png");
-
-	// Demosle
-	pls->init();
+    pls->init();
 	pls->env(xmin, xmax, ymin, ymax, just, axis );
-	pls->lab("(x)", "(y)", nombre.str().c_str());
-	pls->line(fin - inicio, x, y);
-    pls->fill(fin -inicio, x, y);
+    	pls->lab("(x)", "(y)", nombre.str().c_str());
+    pls->fill(cant_puntos, x, y);
 
-	// Lo terminamos de usar
-	delete pls;
+    delete pls;
 }
 
 int main(int argc, char *argv[])
@@ -274,7 +271,7 @@ int main(int argc, char *argv[])
             if(argc == 5)
             {
                 cout << "La integral es " << getIntegral((string)argv[2])<< endl;
-                graficarFuncion((string)argv[2], atoi(argv[3]), atoi(argv[4]));
+                graficar((string)argv[2], atoi(argv[3]), atoi(argv[4]));
                 cout << "Se grafico, vealo!" << endl;
             }
             else
