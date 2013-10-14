@@ -159,7 +159,7 @@ string getIntegral(string funcion)
 	return  result.str();
 }
 
-float evaluarPunto(string miniFuncion, int x)
+float evaluarPunto(string miniFuncion, float x)
 {
 	int pos = miniFuncion.find('x');
 	if (pos < miniFuncion.length())
@@ -172,7 +172,7 @@ float evaluarPunto(string miniFuncion, int x)
 		return atoi(miniFuncion.c_str());
 }
 
-float evaluarUnpunto(string polinomio, float x)
+float evaluarUnpuntopolinomio(string polinomio, float x)
 {
 	float resultado = 0;
 	vector<string> polinomioseparado = splitFuncion(polinomio);
@@ -260,37 +260,37 @@ void graficarFuncion(string funcionEntrada,int inicio, int fin)
 
 int main(int argc, char *argv[])
 {
-	if(argc > 1)
-	{
-		if (strcmp(argv[1],"-i")==0)
-		{
-			if(argc == 3)
-				cout << "La integral es " << getIntegral((string)argv[2])<< endl;
-			else
-				cout << "Falta el polinomio!" << endl;
-		}
-		else if(strcmp(argv[1],"-g")==0)
-		{
-			if(argc == 5)
-			{
-				cout << "La integral es " << getIntegral((string)argv[2])<< endl;
-				graficarFuncion((string)argv[2], atoi(argv[3]), atoi(argv[4]));
-				cout << "Se grafico, vealo!" << endl;
-			}
-			else
-				cout << "Le faltaron parametros, el polinomio, desde o hasta" << endl;
-		}
-		else if(strcmp(argv[1],"-v")==0)
-		{
-			cout << "Natalia Tarifeño" << endl;
-			cout << "Sebastian Rocha" << endl;
-			cout << "Patricio Pérez" << endl;
-			cout << "Fecha de compilacion: " << __DATE__ << " " << __TIME__ << endl;
-		}
-		else
-			cout << "Opcion invalida" << endl;
-	}
-	else
-		cout << "Tiene que pasarle algun parametro!" << endl;
-	return 0;
+    if(argc > 1)
+    {
+        if (strcmp(argv[1],"-i")==0)
+        {
+            if(argc == 3)
+                cout << "La integral es " << getIntegral((string)argv[2])<< endl;
+            else
+                cout << "Falta el polinomio!" << endl;
+        }
+        else if(strcmp(argv[1],"-g")==0)
+        {
+            if(argc == 5)
+            {
+                cout << "La integral es " << getIntegral((string)argv[2])<< endl;
+                graficarFuncion((string)argv[2], atoi(argv[3]), atoi(argv[4]));
+                cout << "Se grafico, vealo!" << endl;
+            }
+            else
+                cout << "Le faltaron parametros, el polinomio, desde o hasta" << endl;
+        }
+        else if(strcmp(argv[1],"-v")==0)
+        {
+            cout << "Natalia Tarifeño" << endl;
+            cout << "Sebastian Rocha" << endl;
+            cout << "Patricio Pérez" << endl;
+            cout << "Fecha de compilacion: " << __DATE__ << " " << __TIME__ << endl;
+        }
+        else
+            cout << "Opcion invalida" << endl;
+    }
+    else
+        cout << "Tiene que pasarle algun parametro!" << endl;
+    return 0;
 }
