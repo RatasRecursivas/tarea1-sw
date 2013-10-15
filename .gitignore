@@ -35,3 +35,6 @@
 *.la
 *.a
 /Debug
+
+# Flaitemente el nombre del binario
+integral
