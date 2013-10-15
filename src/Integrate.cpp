@@ -13,6 +13,7 @@
 #include <vector>
 #include <cmath>
 #include <cstring>
+#include <ctime>
 #include <plstream.h>
 
 using namespace std;
@@ -218,6 +219,17 @@ void graficar(string funcion, int inicio, int fin)
     nombre << "f(x) = " << integral;
     int it = 0; // Itera por los arreglos x e y
 
+    // Nombre de fichero de salida
+    char filename[100];
+    stringstream f_name;
+    time_t rawtime;
+    tm *timeinfo;
+    time(&rawtime);
+    timeinfo = localtime(&rawtime);
+    // Ahora si que si, escribimos la info al string
+    strftime(filename, 100, "%Y-%m-%d-%H-%M-%S", timeinfo);
+    f_name << filename << ".png";
+
     // Arreglos de puntos (x,y)
     PLFLT x[cant_puntos], y[cant_puntos];
 
@@ -247,7 +259,7 @@ void graficar(string funcion, int inicio, int fin)
     plstream *pls; //Objeto de plot
     pls = new plstream();
     plsdev("png"); // Guardamos en png
-    plsfnam("test2.png"); // Aca se guarda
+    plsfnam(f_name.str().c_str()); // Aca se guarda
 
     pls->init();
     pls->env(xmin, xmax, ymin, ymax, just, axis );
@@ -255,6 +267,7 @@ void graficar(string funcion, int inicio, int fin)
     pls->fill(cant_puntos, x, y);
 
     delete pls;
+    cout << "Grafico guardado en " << f_name.str() << endl;
 }
 
 int main(int argc, char *argv[])
@@ -272,15 +285,24 @@ int main(int argc, char *argv[])
         {
             if(argc == 5)
             {
-                cout << "La integral es " << getIntegral((string)argv[2]) << endl;
-                graficar((string)argv[2], atoi(argv[3]), atoi(argv[4]));
-                cout << "Se grafico, vealo!" << endl;
+                int inicio = atoi(argv[3]);
+                int fin = atoi(argv[4]);
+                if(inicio >= 0 && fin >= 0 && fin > inicio)
+                {
+                    cout << "La integral es " << getIntegral((string)argv[2]) << endl;
+                    graficar((string)argv[2], inicio, fin);
+                }
+                else
+                {
+                    cout << "Problema de rango, recuerde que desde y hasta deben ser mayores a 0, y obviamente hasta debe ser mayor a desde" << endl;
+                }
             }
             else
                 cout << "Le faltaron parametros, el polinomio, desde o hasta" << endl;
         }
         else if(strcmp(argv[1], "-v") == 0)
         {
+            cout << "Integracion de Polinomio por ratas recursivas" << endl;
             cout << "Natalia Tarifeño" << endl;
             cout << "Sebastian Rocha" << endl;
             cout << "Patricio Pérez" << endl;
@@ -293,3 +315,4 @@ int main(int argc, char *argv[])
         cout << "Tiene que pasarle algun parametro!" << endl;
     return 0;
 }
+
