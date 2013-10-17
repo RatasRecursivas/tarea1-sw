@@ -36,5 +36,7 @@
 *.a
 /Debug
 
-# Flaitemente el nombre del binario
+# Flaitemente el nombre del binario y los .png generados
 integral
+*.png
+
