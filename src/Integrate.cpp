@@ -213,10 +213,10 @@ vector<float> y_puntos(string funcion, vector<float> x_puntos)
 
 void graficar(string funcion, int inicio, int fin)
 {
-    int cant_puntos = 2 * (fin - inicio); // Recordar ver una distribucion de puntos del 105%
+    int cant_puntos = fin - inicio + 3; // Recordar ver una distribucion de puntos del 105% u otra
     string integral = getIntegral(funcion);
     stringstream nombre;
-    nombre << "f(x) = " << integral;
+    nombre << "f(x) = " << integral << " Desde x = " << inicio << " Hasta x = " << fin;
     int it = 0; // Itera por los arreglos x e y
 
     // Nombre de fichero de salida
@@ -232,28 +232,34 @@ void graficar(string funcion, int inicio, int fin)
 
     // Arreglos de puntos (x,y)
     PLFLT x[cant_puntos], y[cant_puntos];
+    
+    // Hackish, genera un punto en eje x al principio
+    x[0] = inicio;
+    y[0] = 0;
+    it++;
 
     vector<float> x_valores = x_puntos(inicio, fin); // Obtener coordenadas x
     vector<float> y_valores = y_puntos(integral, x_valores);
-
-    PLFLT ymin = y_valores[0], ymax = y_valores[0]; // Valores maximos y minimos de y, se modificaran
-    PLFLT xmin = inicio, xmax = fin; // Max y min de eje x
+    
+    int bound = (fin - inicio) * 0.1; // Para que se alcancen a notar los limites
+    PLFLT ymin = 0, ymax = y_valores[0]; // Valores maximos y minimos de y, se modificaran
+    PLFLT xmin = inicio - bound, xmax = fin + bound; // Max y min de eje x
 
     // Pasar datos de los vectores a los arreglos correspondientes, calcular maximo y minimo valor de eje y
     for(vector<float>::iterator x_it = x_valores.begin(), y_it = y_valores.begin(); x_it != x_valores.end(); x_it++, y_it++, it++)
     {
         if(*y_it > ymax)
             ymax = *y_it;
-        if(*y_it < ymin)
-            ymin = *y_it;
         x[it] = *x_it;
         y[it] = *y_it;
     }
+    
+    ymax += ymax * 0.1; // Para que se alcance a notar los limites
 
     PLINT just = 0, axis = 1;
 
-    // Generar el eje x para cerrar los poligonos generados por el polinomio
-    x[it] = (fin - inicio);
+    // Generar el punto en eje x para cerrar los poligonos generados por el polinomio
+    x[it] = fin;
     y[it] = 0;
 
     plstream *pls; //Objeto de plot
